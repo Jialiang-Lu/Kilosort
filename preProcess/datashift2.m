@@ -20,18 +20,24 @@ rez.ops.yup = ymin:dmin/2:ymax; % centers of the upsampled y positions
 
 % dminx = median(diff(unique(rez.xc)));
 yunq = unique(rez.yc);
-mxc = zeros(numel(yunq), 1);
+mxc = NaN(numel(yunq), 1);
 for j = 1:numel(yunq)
     xc = rez.xc(rez.yc==yunq(j));
     if numel(xc)>1
        mxc(j) = median(diff(sort(xc))); 
     end
 end
-dminx = max(5, median(mxc));
+dminx = median(mxc, 'omitnan');
+if isnan(dminx)
+    dminx = xmax-xmin;
+end
 fprintf('horizontal pitch size is %d \n', dminx)
 
 rez.ops.dminx = dminx;
 nx = round((xmax-xmin) / (dminx/2)) + 1;
+if isnan(nx)
+    nx = 1;
+end
 rez.ops.xup = linspace(xmin, xmax, nx); % centers of the upsampled x positions
 disp(rez.ops.xup) 
 

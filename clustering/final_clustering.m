@@ -51,9 +51,13 @@ iC = gather(iC(:,iW));
 ss = double(st3(:,1)) / ops.fs;
 
 dmin = rez.ops.dmin;
-ycenter = (min(rez.yc) + dmin-1):(2*dmin):(max(rez.yc)+dmin+1);
+ycenter = (min(rez.yc) + dmin/2):(2*dmin):(max(rez.yc)-dmin/2);
 dminx = rez.ops.dminx;
-xcenter = (min(rez.xc) + dminx-1):(2*dminx):(max(rez.xc)+dminx+1);
+if dminx>0
+    xcenter = (min(rez.xc) + dminx-1):(2*dminx):(max(rez.xc)+dminx+1);
+else
+    xcenter = rez.xc(1);
+end
 [xcenter, ycenter] = meshgrid(xcenter, ycenter);
 xcenter = xcenter(:);
 ycenter = ycenter(:);
@@ -71,7 +75,7 @@ for j = 1:numel(ycenter)
     end
     y0 = ycenter(j);
     x0 = xcenter(j);    
-    xchan = (abs(ycup - y0) < dmin) & (abs(xcup - x0) < dminx);
+    xchan = (abs(ycup - y0) < dmin) & (abs(xcup - x0) <= dminx);
     
     itemp = find(xchan);
         
